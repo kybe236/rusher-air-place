@@ -1,0 +1,16 @@
+{
+  "Plugin-Class": "org.kybe.Main",
+  "Name": "Grim Airplace",
+  "Version": "${plugin_version}",
+  "Description": "Grim Airplace",
+  "Authors": [
+    "kybe236"
+  ],
+  "Minecraft-Versions": [
+    "1.21.1",
+    "1.21",
+    "1.20.4",
+    "1.20.2",
+    "1.20.1"
+  ]
+}
