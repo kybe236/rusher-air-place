@@ -50,7 +50,7 @@ public class GrimAirPlace extends ToggleableModule {
 	private final BooleanSetting swing = new BooleanSetting("Swing", "Swing hand", true);
 	private final NumberSetting<Integer> delay = new NumberSetting<>("Delay", "Delay for AirPlace", 4, 0, 10);
 	private final BooleanSetting grim = new BooleanSetting("Grim", "Grim", false);
-	private final ColorSetting color = new ColorSetting("Color", "Color", new Color(0, 0, 0, 0).getRGB());
+	private final ColorSetting color = new ColorSetting("Color", "Color", new Color(0, 0, 0, 0));
 
 
 	public GrimAirPlace() {
@@ -72,7 +72,9 @@ public class GrimAirPlace extends ToggleableModule {
 		if (cooldown > 0) return;
 
 		HitResult thit = mc.getCameraEntity().pick(range.getValue(), 0, false);
-		if (!(thit instanceof BlockHitResult bhr) || !mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.AIR)) return;
+		if (!(thit instanceof BlockHitResult bhr) || !(mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.AIR) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.WATER) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.LAVA))) {
+			return;
+		}
 		pos = bhr.getBlockPos();
 	}
 
@@ -85,7 +87,9 @@ public class GrimAirPlace extends ToggleableModule {
 		}
 		HitResult thit = mc.getCameraEntity().pick(range.getValue(), 0, false);
 
-		if (!(thit instanceof BlockHitResult bhr) || pos == null || !pos.equals(bhr.getBlockPos()) || !mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.AIR)) return;
+		if (!(thit instanceof BlockHitResult bhr) || pos == null || !pos.equals(bhr.getBlockPos()) || !(mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.AIR) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.WATER) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.LAVA))) { 
+			return; 
+		}
 		hit = bhr;
 
 		boolean main = mc.player.getMainHandItem().getItem() instanceof BlockItem;
@@ -137,11 +141,12 @@ public class GrimAirPlace extends ToggleableModule {
 
 	@Subscribe
 	public void onRender3D(EventRender3D e) {
-		if (hit == null || mc.level == null || !mc.level.getBlockState(hit.getBlockPos()).getBlock().equals(Blocks.AIR) || (!(mc.player.getMainHandItem().getItem() instanceof BlockItem) && !(mc.player.getOffhandItem().getItem() instanceof BlockItem)))
+		if (hit == null || mc.level == null || !(mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.AIR) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.WATER) || mc.level.getBlockState(bhr.getBlockPos()).getBlock().equals(Blocks.LAVA)) || (!(mc.player.getMainHandItem().getItem() instanceof BlockItem) && !(mc.player.getOffhandItem().getItem() instanceof BlockItem)))
 			return;
 		final IRenderer3D renderer = e.getRenderer();
 
-		final int fcolor = ColorUtils.transparency(this.color.getValueRGB(), 0.5f);
+		final int fcolor = ColorUtils.transparency(this.color.getValueRGB(),this.color.getAlpha());
+		
 
 		renderer.begin(e.getMatrixStack());
 
